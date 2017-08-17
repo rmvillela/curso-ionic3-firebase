@@ -1,5 +1,11 @@
+import { EditShoppingItemPage } from './../edit-shopping-item/edit-shopping-item';
+import { FirebaseListObservable, AngularFireDatabase } from 'angularfire2/database';
+
+import { ShoppingItem } from './../../models/shopping-item/shopping-item.interface';
+import { AddShoppingPage } from './../add-shopping/add-shopping';
+
 import { Component } from '@angular/core';
-import { NavController, NavParams } from 'ionic-angular';
+import { NavController, NavParams, ActionSheetController } from 'ionic-angular';
 
 /**
  * Generated class for the ShoppingListPage page.
@@ -14,11 +20,63 @@ import { NavController, NavParams } from 'ionic-angular';
 })
 export class ShoppingListPage {
 
-  constructor(public navCtrl: NavController, public navParams: NavParams) {
+  shoppingListRef$: FirebaseListObservable<ShoppingItem[]>;
+
+  constructor(public navCtrl: NavController, public navParams: NavParams, private database: AngularFireDatabase, private actionSheetCtrl: ActionSheetController) {
+
+    this.shoppingListRef$ = this.database.list('shopping-list');
   }
 
-  ionViewDidLoad() {
-    console.log('ionViewDidLoad ShoppingListPage');
+  selectShoppingItem(shoppingItem: ShoppingItem) {
+    /*
+      Display an ActionSheet that gives the user the following options:
+
+      1. Edit the existent ShoppingItem
+      2. Delete the ShoppingItem
+      3. Cancel the selection
+    */
+    this.actionSheetCtrl.create({
+      title: `${shoppingItem.itemName}`,
+      buttons: [
+        {
+          text: 'Edit',
+          handler: () => {
+            //send the user to the editShoppingItemPage and pass the key as a parameter
+            this.navCtrl.push(EditShoppingItemPage, { shoppingItemId: shoppingItem.$key })
+          }
+
+          /**
+           * Navigation stack:
+           *
+           *  ['ShoppingListPage',
+           *    'EditShoppingItemPage',
+           *    {shoppingItemId: '-KrQwVyXmYn3YCx_lcll'}
+           *  ]
+           */
+
+        },
+        {
+          text: 'Delete',
+          role: 'destructive',
+          handler: () => {
+            this.shoppingListRef$.remove(shoppingItem.$key);
+          }
+        },
+        {
+          text: 'Cancel',
+          role: 'cancel',
+          handler: () => {
+            console.log("The user has selected the cancel button");
+          }
+        }
+      ]
+    }).present();
+
+  }
+
+
+  navigateToAddShoppingPage() {
+    this.navCtrl.push(AddShoppingPage);
   }
 
 }

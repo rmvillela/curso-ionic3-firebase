@@ -1,4 +1,7 @@
+import { EditShoppingItemPage } from './../pages/edit-shopping-item/edit-shopping-item';
+import { AddShoppingPage } from './../pages/add-shopping/add-shopping';
 import { ShoppingListPage } from './../pages/shopping-list/shopping-list';
+import { AngularFireDatabaseModule } from 'angularfire2/database';
 import { AngularFireModule } from 'angularfire2';
 import { BrowserModule } from '@angular/platform-browser';
 import { ErrorHandler, NgModule } from '@angular/core';
@@ -12,18 +15,23 @@ import { FIREBASE_CREDENTIALS } from './firebase.credentials';
 @NgModule({
   declarations: [
     MyApp,
-    ShoppingListPage
+    ShoppingListPage,
+    AddShoppingPage,
+    EditShoppingItemPage
   ],
   imports: [
     BrowserModule,
     IonicModule.forRoot(MyApp),
     //Initialize AngularFire with credentials from the dashboard
-    AngularFireModule.initializeApp(FIREBASE_CREDENTIALS)
+    AngularFireModule.initializeApp(FIREBASE_CREDENTIALS),
+    AngularFireDatabaseModule
   ],
   bootstrap: [IonicApp],
   entryComponents: [
     MyApp,
-    ShoppingListPage
+    ShoppingListPage,
+    AddShoppingPage,
+    EditShoppingItemPage
   ],
   providers: [
     StatusBar,
